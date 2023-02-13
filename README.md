@@ -2,7 +2,7 @@
 
 # Project Goals
 
- - Identify if there is a correlation between BTC, DJI, and Gold 
+ - Identify if there is a correlation between BTC(Bitcoin), DJI(Dow Jones Industrial Average), and Gold 
  - Build a model to best predict BTC's price in the next 6 months
 
 # Project Description
