@@ -52,20 +52,19 @@ We also will provide any usesful insights on interesting findings to predict BTC
 
 | Target Variable |     Definition     |
 | --------------- | ------------------ |
-|      BTC price    | price of Bitcoin |
+|      btc_price    | price of Bitcoin |
 
 | Feature  | Definition |
 | ------------- | ------------- |
-| year_built | The year the house was built  |
-| lot_sqft | The square feet of the lot  |
-| long | The longitude coordinates of the house |
-| lat | The latitude coordinates of the house |
-| transaction_month | The month of the transaction date |
-| bathrooms | Number of bathrooms in the house | 
-| bedrooms | Number of bedrooms in the house |
-| fips | Code identifier for county |
-| sqft | Square feet of the property|
-| county | Name of the county the house is located |
+| open | Opening price of the asset |
+| high | The high price point of the asset  |
+| low | The low price point of the asset |
+| close | The closing price of the asset |
+| adj close | The closing price after adjustments  |
+| volume | The amount of an asset that changes hands | 
+| dji_price | The price of the Dow Jones Industrial Average |
+| gold | The price of gold per ounce|
+
 
 
 ## Steps to Reproduce
