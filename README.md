@@ -17,9 +17,6 @@ We also will provide any usesful insights on interesting findings to predict BTC
  1. Does BTC's price have a correlation with the DJI?
  2. Does BTC's price have a relationship with Gold?
  3. How does the volatility of BTC compare with that of the DJI and Gold?
- 4. How does the behavior of BTC, the DJI, and Gold change during periods of market stress or economic uncertainty?
- 
-
 
 
 # The Plan
