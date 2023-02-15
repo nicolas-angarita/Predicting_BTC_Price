@@ -45,17 +45,35 @@ def plot_and_eval(target_var, train, validate, yhat_df):
     rmse = evaluate(target_var, validate, yhat_df)
     print(target_var, '-- RMSE: {:.0f}'.format(rmse))
     plt.show()
+
     
-    
-def append_eval_df(model_type, target_var):
+def plot_eval(target_var, train, validate, yhat_df):
+    plt.figure(figsize = (12,4))
+    plt.plot(train[target_var], label='Train', linewidth=1, color='#377eb8')
+    plt.plot(validate[target_var], label='Validate', linewidth=1, color='#ff7f00')
+    plt.plot(yhat_df[target_var], label='yhat', linewidth=2, color='#a65628')
+    plt.legend(['Train','Validate','BTC Predictions'])
+    plt.title('BTC Predictions')
+    plt.xlabel('Date')
+    plt.ylabel('Price in USD')
+    rmse = evaluate(target_var, validate, yhat_df)
+    print(target_var, '-- RMSE: {:.0f}'.format(rmse))
+    plt.ylim(0,20000)
+    plt.show()    
+
+
+def append_eval_df(model_type, target_var, validate, yhat_df):
     '''
     This function takes in as arguments the type of model run, and the name of the target variable. 
     It returns the eval_df with the rmse appended to it for that model and target_var. 
     '''
-    rmse = evaluate(target_var)
+    rmse = evaluate(target_var,validate, yhat_df)
     d = {'model_type': [model_type], 'target_var': [target_var],
         'rmse': [rmse]}
     d = pd.DataFrame(d)
+       
+    eval_df = pd.DataFrame(columns=['model_type', 'target_var', 'rmse'])
+
     return eval_df.append(d, ignore_index = True)    
 
 
@@ -89,7 +107,7 @@ def resplit_btc(btc_df):
     validate = btc_df[train_size:validate_end_index]
     test = btc_df[validate_end_index:]
     
-    return train, validate, test
+    return btc_df, train, validate, test
 
 
 def baseline_model(train, validate):
@@ -106,4 +124,119 @@ def baseline_model(train, validate):
     return yhat_df
 
 
+def holts_linear(col, train, validate):
+    '''
+    This function makes a holts linear model
+    '''
+    # create our Holt Object
+    model = Holt(train[col], exponential=False, damped=True)
+    model = model.fit(optimized=True)   
+    
+    yhat_df = model.predict(start = validate.index[0], end = validate.index[-1])
+    yhat_df = pd.DataFrame({'btc_price': yhat_df},
+                          index=validate.index)
+    return yhat_df
 
+
+def holts_seasonal(train, validate):
+    '''
+    This function makes a holts seasonal model
+    '''
+    hst_price_fit4 = ExponentialSmoothing(train.btc_price, seasonal_periods=365, trend='add',
+                                          seasonal='mul', damped=True).fit()
+    
+    yhat_list = hst_price_fit4.forecast(validate.shape[0]).tolist()
+    yhat_df = pd.DataFrame({'btc_price': yhat_list}, index=validate.index)
+    
+    return yhat_df
+
+
+def previous_cycle(btc_df):
+    '''
+    This function makes a previous cycle model
+    '''
+    train = btc_df[:'2021-04-15']
+    validate = btc_df['2021-04-16':'2022-03-15']
+    test = btc_df['2022-03-16':]
+    
+    train.diff(365)
+    
+    yhat_df = train['2020-05-17':'2021-04-15'] + train.diff(365).mean()
+
+    yhat_df.index = validate.index
+    
+    return yhat_df, train, validate
+
+
+def comparing_rmse(train, validate):
+    '''
+    This function makes a data frame to compare the rmse of the different models
+    '''
+    periods = [50,100]
+    eval_dfs = []
+
+    for p in periods: 
+        rolling_btc = round(train['btc_price'].rolling(p).mean()[-1], 2)
+        yhat_df = make_baseline_predictions(validate, rolling_btc)
+        model_type = str(p) + '_day_moving_avg'
+        eval_df = append_eval_df(model_type, 'btc_price', validate, yhat_df)
+        eval_dfs.append(eval_df)
+        
+    #Holts winter linear
+    yhat_df = holts_linear('btc_price', train, validate)
+    eval_df = append_eval_df('holts_optimized','btc_price', validate, yhat_df)
+    eval_dfs.append(eval_df)
+    
+    #Holts Seasonal
+    yhat_df = holts_seasonal(train, validate)
+    eval_df = append_eval_df('holts_add_mul', 'btc_price', validate, yhat_df)
+    eval_dfs.append(eval_df)
+    
+    rmse_compare = pd.concat(eval_dfs, axis = 0)
+    
+    return rmse_compare.sort_values('rmse').reset_index().drop(columns= 'index')
+
+
+def test_model_split(btc_df):
+    '''
+    
+    '''
+    #splitting
+    train_size = int(round(btc_df.shape[0] * 0.6))
+    validate_size = int(round(btc_df.shape[0] * 0.2))
+    test_size = int(round(btc_df.shape[0] * 0.2))
+    
+    validate_end_index = train_size + validate_size
+    
+    train = btc_df[:train_size]
+    validate = btc_df[train_size:validate_end_index]
+    test = btc_df[validate_end_index:]
+    
+    return train, validate, test
+
+
+def make_test_predictions(train, validate, test):
+    
+    rolling_btc = round(train['btc_price'].rolling(100).mean()[-1], 2)
+    
+    # Create a DataFrame with the predictions and the corresponding index range
+    index_range = pd.date_range(start=validate.index[0], end=test.index[-1], freq='D')
+    yhat_df = pd.DataFrame({'btc_price': rolling_btc}, index=index_range)
+    
+    yhat_df = yhat_df['2021-06-09':]
+    
+    return yhat_df 
+
+
+def final_plot(train, validate, test, yhat_df, target_var):
+    '''
+    
+    '''
+    plt.figure(figsize=(12,4))
+    plt.plot(train[target_var], color='#377eb8', label='train')
+    plt.plot(validate[target_var], color='#ff7f00', label='validate')
+    plt.plot(test[target_var], color='#4daf4a',label='test')
+    plt.plot(yhat_df[target_var], color='#a65628', label='yhat')
+    plt.legend()
+    plt.title(target_var)
+    plt.show()
