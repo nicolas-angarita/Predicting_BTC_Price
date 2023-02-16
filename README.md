@@ -79,19 +79,23 @@ We also will provide any usesful insights on interesting findings to predict BTC
 
 ## Conclusions
 
-**TBD Home value predictions were used by minimizing RMSE within our models. County and transaction month have proven to be the most valuable, but there is still room for improvement.**
+**Bitcoin predictions were used by minimizing RMSE within our models. Both DJI and Gold prove to have mild to strong correlations with BTC's price.**
 
 
  
-**Best Model's performance:<br>
-My best model reduced the root mean squared error by TBD compared to the baseline results.**
+**Best Model's performance:<br>**
+**- My best model reduced the root mean squared error by 3,974 dollars compared to the baseline results.**
 
-**RMSE reduced by $82,493.41 on in-sample data (train), RMSE $84,100.76 on out-of-sample data (validate), and RMSE of $80,897.87 on the test data when compared to the baseline RMSE.**
+**- RMSE 9280.0 dollars on in-sample (train), RMSE 9280.0 dollars on out-of-sample data (validate) and RMSE of 27436.26 dollars on the test data.**
 
 ## Recommendations
-- TBD
+- I would recommend gathering more data from BTC's start date of trading.
 
+- I would also recommend collecting data or finding more correlations to BTC's price, as predicitng price on just BTC historical data is not optimal. This is a good base to better understand the historical price, but a multivariate time series model would have to be made to get better predictions.
 ## Next Steps
 
-- I would add more columns/features from the database to see if there are better relationships to help predict price.
-- Consider adding different hyperparameters to models for better results.
+- Find more correlations to better predict BTC price (DXY to BTC price)
+
+- Consider adding different hyperparameters to models for better results
+    
+- Take this data and build multivariate models
