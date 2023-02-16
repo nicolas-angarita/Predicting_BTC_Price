@@ -117,10 +117,10 @@ def volatility(year):
 
     #plot the results
     btc_returns.plot(c = 'black')
-    dji_returns.plot(c = 'orange')
-    gold_returns.plot(c = 'dodgerblue')
+    gold_returns.plot(c = 'orange')
+    dji_returns.plot(c = 'dodgerblue')
     plt.xlim('2014-09-17', '2023-01-01')
     plt.ylabel('Daily Percent')
     plt.title('Volatility')
-    plt.legend(['BTC','DJI', 'GOLD'], loc = 'lower left')
+    plt.legend(['BTC','GOLD','DJI'], loc = 'lower left')
     plt.show()

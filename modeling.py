@@ -249,6 +249,11 @@ def final_plot(train, validate, test, yhat_df, target_var):
     '''
     
     '''
+    # Plotting test model
+    rmse_price = sqrt(mean_squared_error(test['btc_price'], yhat_df['btc_price']))
+    print('FINAL PERFORMANCE OF MODEL ON TEST DATA')
+    print('rmse-price: ', rmse_price)
+    
     plt.figure(figsize=(12,4))
     plt.plot(train[target_var], color='#377eb8', label='train')
     plt.plot(validate[target_var], color='#ff7f00', label='validate')
@@ -259,6 +264,9 @@ def final_plot(train, validate, test, yhat_df, target_var):
     plt.xlabel('Date')
     plt.ylabel('Price in USD')
     plt.show()
+
+   
+    
     
 def forecasting_plot(train, validate, test, yhat_df, forecast, target_var):
     plt.figure(figsize=(12,4))
