@@ -5,14 +5,14 @@
 
 # Project Goals
 
- - Identify if there is a correlation between BTC(Bitcoin), DJI(Dow Jones Industrial Average), and Gold 
+ - Identify if there is a correlation between BTC (Bitcoin), DJI (Dow Jones Industrial Average), and Gold 
  - Build a model to best predict BTC's price in the next 6 months
 
 # Project Description
 
 We are looking to build a supervised machine learning model using time series analysis algorithm to best predict prices for BTC for the next 6 months.
 We plan to explore and find if there is any correlations between BTC, DJI, and Gold prices to help us predict price. The time frame we are looking at is 
-from 9/17/2014 to the end of 2022. After we have explored and made our models we will recommend to use DJI and Gold data or not to help predict price. 
+from 9/17/2014 to the end of 2022. After we have explored and made our models we will recommend to use DJI and Gold data or not, to help predict price. 
 We also will provide any usesful insights on interesting findings to predict BTC's price for the next 6 months.
 
 # Initial Questions
