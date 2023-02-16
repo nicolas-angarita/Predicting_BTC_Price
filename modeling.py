@@ -228,6 +228,23 @@ def make_test_predictions(train, validate, test):
     return yhat_df 
 
 
+def forecasting(train, validate, test):
+    '''
+    
+    '''
+    rolling_btc = round(train['btc_price'].rolling(100).mean()[-1], 2)
+    
+    # Create a DataFrame with the predictions and the corresponding index range
+    start_date = validate.index[0]
+    end_date = test.index[-1] + pd.Timedelta(days=365)
+    index_range = pd.date_range(start=start_date, end=end_date, freq='D')
+    
+    yhat_df = pd.DataFrame({'btc_price': rolling_btc}, index=index_range)
+    
+    forecast = yhat_df['2023':]
+    
+    return forecast
+
 def final_plot(train, validate, test, yhat_df, target_var):
     '''
     
@@ -238,5 +255,21 @@ def final_plot(train, validate, test, yhat_df, target_var):
     plt.plot(test[target_var], color='#4daf4a',label='test')
     plt.plot(yhat_df[target_var], color='#a65628', label='yhat')
     plt.legend()
-    plt.title(target_var)
+    plt.title('BTC Predictions')
+    plt.xlabel('Date')
+    plt.ylabel('Price in USD')
     plt.show()
+    
+def forecasting_plot(train, validate, test, yhat_df, forecast, target_var):
+    plt.figure(figsize=(12,4))
+    plt.plot(train[target_var], color='#377eb8', label='Train')
+    plt.plot(validate[target_var], color='#ff7f00', label='Validate')
+    plt.plot(test[target_var], color='#4daf4a', label='Test')
+    plt.plot(yhat_df[target_var], color='#a65628', label='yhat')
+    plt.plot(forecast[target_var], color='black', label='Forecast')
+    plt.title('BTC Predictions')
+    plt.xlabel('Date')
+    plt.ylabel('Price in USD')
+    plt.legend()
+    plt.show()    
+    
